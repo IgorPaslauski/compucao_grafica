@@ -23,13 +23,15 @@ def angulo_para_posicao(angulo, comprimento):  # 0 = 12h, -90 alinha topo
     return (CENTRO[0] + comprimento * math.cos(rad), CENTRO[1] + comprimento * math.sin(rad))
 
 
-def processar_teclado(rodando, alarme_h, alarme_m):
-    """Trata teclas A/D=minuto, W/S=hora; retorna rodando, alarme_h, alarme_m."""
+def processar_teclado(rodando, alarme_h, alarme_m, tela):
+    """Trata teclas A/D=minuto, W/S=hora, P=print; retorna rodando, alarme_h, alarme_m."""
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             rodando = False
         elif e.type == pygame.KEYDOWN:
-            if e.key in (pygame.K_a, pygame.K_LEFT):
+            if e.key == pygame.K_p:
+                pygame.image.save(tela, "relogio_print.png")
+            elif e.key in (pygame.K_a, pygame.K_LEFT):
                 alarme_m = (alarme_m - 1) % 60
             elif e.key in (pygame.K_d, pygame.K_RIGHT):
                 alarme_m = (alarme_m + 1) % 60
@@ -95,7 +97,7 @@ alarme_h, alarme_m = 0, 0
 alarme_soou = None
 
 while rodando:
-    rodando, alarme_h, alarme_m = processar_teclado(rodando, alarme_h, alarme_m)
+    rodando, alarme_h, alarme_m = processar_teclado(rodando, alarme_h, alarme_m, tela)
     h, m, s = time.localtime().tm_hour % 12, time.localtime().tm_min, time.localtime().tm_sec
     alarme_soou = verificar_alarme(h, m, alarme_h, alarme_m, alarme_soou)
 
