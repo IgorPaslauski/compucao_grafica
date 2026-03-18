@@ -1,0 +1,3 @@
+# Braço Robótico - Aula 05
+# pygame-ce: compatível com Python 3.10+
+pygame-ce>=2.4.0
