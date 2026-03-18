@@ -1,0 +1,2 @@
+# pygame-ce: suporta Python 3.10 a 3.14 (pygame original falha em 3.12+)
+pygame-ce>=2.4.0

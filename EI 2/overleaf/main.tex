@@ -1,0 +1,76 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left
+}
+
+\title{Transformações Geométricas 2D e 3D \\ \small EI 2 - Computação Gráfica}
+\author{Nome do acadêmico}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Resumo}
+Implementação em Python/Pygame de translação, escala e rotação em 2D e 3D. Dois programas: \texttt{transformacoes\_2d.py} (triângulo) e \texttt{transformacoes\_3d.py} (cubo com projeção isométrica).
+
+\section{Fundamentação}
+Um ponto $(x,y)$ em coordenadas homogêneas é $[x, y, 1]$. O ponto transformado é $P' = M \cdot P$.
+
+\textbf{Translação:} $T(t_x, t_y)$ desloca o objeto.
+\[
+T = \begin{bmatrix} 1 & 0 & t_x \\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}
+\]
+
+\textbf{Escala:} $S(s_x, s_y)$ altera o tamanho (em relação à origem).
+\[
+S = \begin{bmatrix} s_x & 0 & 0 \\ 0 & s_y & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\]
+
+\textbf{Rotação:} $R(\theta)$ gira o objeto (ângulo em radianos).
+\[
+R = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\]
+
+Para escala ou rotação em torno de $(c_x, c_y)$: translação para o centro, aplicar S ou R, translação de volta.
+
+\section{Implementação}
+O programa usa um triângulo fixo no centro. Teclas: S (escala 1,2), R (rotação 15°), T (translação 30,20), Backspace (voltar).
+
+\textbf{Translação} — soma $t_x$ e $t_y$ em cada coordenada:
+\begin{lstlisting}
+def translacao(pontos, tx, ty):
+    return [(x + tx, y + ty) for x, y in pontos]
+\end{lstlisting}
+
+\textbf{Escala} — em torno do centro $(c_x, c_y)$: levar ao centro, multiplicar por $s_x$, $s_y$, voltar:
+\begin{lstlisting}
+x1, y1 = x - cx, y - cy
+x2, y2 = x1 * sx, y1 * sy
+return (x2 + cx, y2 + cy)
+\end{lstlisting}
+
+\textbf{Rotação} — em torno do centro, usando $\cos$ e $\sin$ do ângulo:
+\begin{lstlisting}
+x_novo = cx + (x-cx)*cos - (y-cy)*sin
+y_novo = cy + (x-cx)*sin + (y-cy)*cos
+\end{lstlisting}
+
+\section{Modelo 3D}
+O arquivo \texttt{transformacoes\_3d.py} usa um cubo (8 vértices). As transformações usam matrizes $4 \times 4$: translação $(t_x, t_y, t_z)$, escala $(s_x, s_y, s_z)$ e rotação em torno do eixo Y. A projeção isométrica converte $(x,y,z)$ em coordenadas 2D para desenho na tela.
+
+\section{Como executar}
+\begin{enumerate}
+    \item \texttt{pip install pygame-ce}
+    \item \texttt{python transformacoes\_2d.py} ou \texttt{python transformacoes\_3d.py}
+\end{enumerate}
+
+\end{document}
