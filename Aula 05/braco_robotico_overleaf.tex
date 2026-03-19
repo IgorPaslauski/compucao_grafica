@@ -1,0 +1,33 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{geometry}
+\usepackage{amsmath}
+\geometry{margin=2.2cm}
+
+\title{Braço robótico 2D (Pygame)}
+\author{Computação Gráfica --- Aula 05}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.2em}
+
+\section*{Objetivo}
+Simular visualmente um manipulador planar com dois elos (\emph{links}) de comprimentos fixos $L_1$ e $L_2$, articulado na base e no ``cotovelo'', usando a biblioteca \texttt{pygame}.
+
+\section*{Cinemática direta}
+A base desliza ao longo do eixo horizontal $x$ (altura fixa $y = C_y$). O primeiro elo sai da base com ângulo $\theta_1$ (graus) em relação ao eixo $x$. O segundo elo soma o ângulo relativo $\theta_2$ ao ângulo absoluto do primeiro segmento, de modo que a orientação do segundo elo é $\theta_1 + \theta_2$. A extremidade de um segmento de comprimento $L$ a partir de $(x_0,y_0)$ é
+\begin{equation*}
+  x = x_0 + L\cos(\theta),\qquad y = y_0 + L\sin(\theta),
+\end{equation*}
+com $\theta$ convertido de graus para radianos (\texttt{math.radians}). Assim obtém-se o ponto final do primeiro elo e, a partir dele, o da ponta do segundo.
+
+\section*{Representação gráfica}
+Desenham-se eixos cartesianos (referência), retângulo arredondado da base, segmentos espessos para os braços e círculos nas articulações e na ponta. O laço principal limpa a tela, redesenha e limita a taxa a 60 FPS.
+
+\section*{Controles}
+\texttt{A}/\texttt{D} ou setas esquerda/direita movem a base; \texttt{W}/\texttt{S} alteram $\theta_1$; setas cima/baixo alteram $\theta_2$. Incrementos de $4^\circ$ e repetição de tecla facilitam o ajuste contínuo. \texttt{Esc} encerra o programa.
+
+\end{document}
