@@ -1,0 +1,174 @@
+\documentclass[12pt,a4paper]{article}
+
+% --- Pacotes básicos ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\onehalfspacing
+
+\title{\textbf{Relatório Técnico}\\[0.4em]
+\large Visualizador Interativo de Modelos 3D (OBJ/MTL) utilizando WebGL}
+\author{Disciplina de Computação Gráfica}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+\textbf{Integrantes do Grupo}
+
+Henrique Froeder \\
+Nicolas Castro \\
+Jean Kronbauer \\
+Igor Paslauski Pedroso de Oliveira
+\end{center}
+
+\begin{abstract}
+Este trabalho apresenta o desenvolvimento de um visualizador de modelos 3D executado diretamente no navegador. A aplicação foi construída utilizando HTML, CSS e JavaScript puro, com renderização via WebGL.
+
+O sistema permite carregar arquivos no formato OBJ e MTL, aplicar transformações no modelo em tempo real e visualizar a cena em diferentes modos, como sólido e wireframe. Também são exibidas informações sobre a malha 3D, como número de vértices, arestas e faces.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%===========================================================
+\section{Introdução}
+%===========================================================
+
+A computação gráfica permite a criação e visualização de objetos tridimensionais em ambientes digitais. Um dos formatos mais utilizados para representar modelos 3D é o formato OBJ, que descreve a geometria do objeto. Já o formato MTL define suas propriedades visuais, como cores.
+
+Neste projeto, foi desenvolvido um visualizador 3D simples, com o objetivo de demonstrar conceitos fundamentais como transformações geométricas, projeção e renderização em tempo real.
+
+%===========================================================
+\section{Objetivos}
+%===========================================================
+
+\subsection{Objetivo Geral}
+Desenvolver um visualizador 3D funcional no navegador.
+
+\subsection{Objetivos Específicos}
+\begin{itemize}
+    \item Ler arquivos OBJ e MTL
+    \item Converter modelos para triângulos renderizáveis
+    \item Aplicar transformações (rotação, escala e translação)
+    \item Implementar projeções perspectiva e ortográfica
+    \item Exibir modelos em modo sólido e wireframe
+    \item Mostrar estatísticas da malha (vértices, arestas e faces)
+\end{itemize}
+
+%===========================================================
+\section{Arquitetura do Sistema}
+%===========================================================
+
+O sistema foi dividido em módulos para facilitar organização e manutenção:
+
+\begin{itemize}
+    \item \textbf{index.html}: estrutura da aplicação
+    \item \textbf{style.css}: estilização da interface
+    \item \textbf{main.js}: controle geral e interação do usuário
+    \item \textbf{math3d.js}: cálculos matemáticos (matrizes e vetores)
+    \item \textbf{objParser.js}: leitura de arquivos OBJ
+    \item \textbf{mtlParser.js}: leitura de arquivos MTL
+    \item \textbf{renderer.js}: renderização utilizando WebGL
+\end{itemize}
+
+Essa divisão permite que cada parte do sistema tenha uma responsabilidade específica.
+
+%===========================================================
+\section{Leitura dos Arquivos}
+%===========================================================
+
+\subsection{Arquivo OBJ}
+
+O arquivo OBJ contém a geometria do modelo 3D. Nele são definidos:
+
+\begin{itemize}
+    \item Vértices (v)
+    \item Normais (vn)
+    \item Faces (f)
+\end{itemize}
+
+As faces são convertidas em triângulos para facilitar a renderização.
+
+\subsection{Arquivo MTL}
+
+O arquivo MTL define os materiais do objeto, como cores. Neste projeto, foi utilizado apenas o parâmetro de cor difusa (Kd).
+
+%===========================================================
+\section{Renderização}
+%===========================================================
+
+A renderização é feita utilizando WebGL, que permite desenhar gráficos 3D diretamente no navegador.
+
+\subsection{Iluminação}
+
+Foi implementada iluminação difusa simples (modelo de Lambert), que considera a incidência de luz sobre a superfície do objeto.
+
+\subsection{Projeções}
+
+O sistema suporta dois tipos de projeção:
+
+\begin{itemize}
+    \item Perspectiva (mais realista)
+    \item Ortográfica (sem profundidade visual)
+\end{itemize}
+
+%===========================================================
+\section{Transformações}
+%===========================================================
+
+O usuário pode interagir com o modelo aplicando:
+
+\begin{itemize}
+    \item Rotação
+    \item Escala
+    \item Translação
+\end{itemize}
+
+Essas transformações são realizadas utilizando matrizes 4x4.
+
+%===========================================================
+\section{Interface}
+%===========================================================
+
+A interface foi desenvolvida com foco em simplicidade e usabilidade. Ela permite:
+
+\begin{itemize}
+    \item Carregar arquivos OBJ e MTL
+    \item Alternar entre modo sólido e wireframe
+    \item Visualizar informações do modelo
+\end{itemize}
+
+%===========================================================
+\section{Limitações}
+%===========================================================
+
+\begin{itemize}
+    \item Não há suporte para texturas
+    \item Iluminação simplificada
+    \item Alguns modelos complexos podem não ser renderizados corretamente
+\end{itemize}
+
+%===========================================================
+\section{Conclusão}
+%===========================================================
+
+O projeto atingiu seu objetivo de implementar um visualizador 3D funcional e didático. Ele permite compreender, na prática, conceitos importantes da computação gráfica, como leitura de arquivos, transformações e renderização.
+
+Além disso, a estrutura modular facilita futuras melhorias, como suporte a texturas e iluminação mais avançada.
+
+%===========================================================
+\section{Referências}
+%===========================================================
+
+Shreiner, D. et al. \textit{OpenGL Programming Guide}. Addison-Wesley.
+
+\end{document}
