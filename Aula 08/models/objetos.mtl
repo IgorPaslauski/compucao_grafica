@@ -1,0 +1,22 @@
+# Materiais de exemplo — cor difusa Kd (formato MTL básico)
+
+newmtl vermelho
+Kd 0.88 0.18 0.18
+
+newmtl verde
+Kd 0.22 0.78 0.32
+
+newmtl azul
+Kd 0.28 0.42 0.92
+
+newmtl amarelo
+Kd 0.95 0.88 0.28
+
+newmtl magenta
+Kd 0.85 0.25 0.75
+
+newmtl ciano
+Kd 0.2 0.82 0.86
+
+newmtl cinza
+Kd 0.55 0.56 0.58

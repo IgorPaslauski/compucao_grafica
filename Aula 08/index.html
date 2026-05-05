@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visualizador 3D — OBJ + MTL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-brand">
+        <h1 class="app-brand__title">Visualizador OBJ / MTL</h1>
+        <p class="app-brand__meta">Computação gráfica · WebGL · sem bibliotecas de carga</p>
+      </div>
+      <div class="app-header__toolbar">
+        <div class="app-import">
+          <label for="entradaObj" class="btn btn--outline">Importar OBJ</label>
+          <label for="entradaMtl" class="btn btn--outline">Importar MTL</label>
+        </div>
+        <div class="barra-nav-modelos" role="group" aria-label="Navegar modelos do catálogo">
+          <button type="button" class="btn-nav-modelo" id="btnModeloAnterior" title="Modelo anterior do catálogo">
+            Anterior
+          </button>
+          <span class="barra-nav-modelos-hint" id="hintNavegacaoModelos"></span>
+          <button type="button" class="btn-nav-modelo" id="btnModeloProximo" title="Próximo modelo do catálogo">
+            Próximo
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="principal">
+    <section class="area-canvas" aria-label="Visualização 3D">
+      <div class="viewer-shell">
+        <canvas id="canvas3d" width="900" height="600"></canvas>
+      </div>
+      <p class="aviso" id="msgWebgl"></p>
+    </section>
+
+    <aside class="lateral" aria-label="Arquivos e informações">
+      <div class="painel-secao">
+        <h2 class="painel-secao__titulo">Arquivos</h2>
+        <div class="grupo">
+          <label class="rotulo" for="entradaObj">Modelo (.obj)</label>
+          <input type="file" id="entradaObj" accept=".obj" />
+        </div>
+        <div class="grupo">
+          <label class="rotulo" for="entradaMtl">Materiais (.mtl)</label>
+          <input type="file" id="entradaMtl" accept=".mtl" />
+        </div>
+      </div>
+
+      <div class="grupo grupo-abrir-galeria">
+        <button type="button" class="btn-abrir-galeria" id="btnAbrirGaleriaLateral" title="Abrir galeria de modelos">
+          <span class="btn-abrir-galeria__icone" aria-hidden="true">▣</span>
+          Galeria de modelos
+        </button>
+        <p class="dica-galeria">Painel na base da janela. Clique para expandir.</p>
+      </div>
+
+      <div class="info" id="painelInfo">
+        <h2 class="painel-secao__titulo painel-secao__titulo--inline">Estatísticas</h2>
+        <dl class="info-lista">
+          <dt>Arquivo OBJ</dt><dd id="valorNome">—</dd>
+          <dt>Vértices (V)</dt><dd id="valorV">—</dd>
+          <dt>Arestas únicas (E)</dt><dd id="valorE">—</dd>
+          <dt>Faces triangulares (F)</dt><dd id="valorF">—</dd>
+          <dt>Euler (V − E + F)</dt><dd id="valorEuler">—</dd>
+        </dl>
+        <h2 class="painel-secao__titulo">Estado</h2>
+        <dl class="info-lista">
+          <dt>Modo</dt><dd id="valorModo">sólido</dd>
+          <dt>Projeção</dt><dd id="valorProjecao">perspectiva</dd>
+          <dt>Transformação</dt><dd id="valorTransformacao">nenhuma</dd>
+          <dt>Eixo de rotação</dt><dd id="valorEixo">—</dd>
+        </dl>
+      </div>
+
+      <details class="ajuda">
+        <summary>Atalhos do teclado</summary>
+        <ul>
+          <li><kbd>W</kbd> malha · <kbd>S</kbd> sólido · <kbd>P</kbd> perspectiva / isométrica</li>
+          <li><kbd>R</kbd> depois <kbd>X</kbd><kbd>Y</kbd><kbd>Z</kbd> — eixo de rotação</li>
+          <li>Setas: rodar ou mover (com <kbd>T</kbd> translação)</li>
+          <li><kbd>+</kbd> <kbd>−</kbd> escala · <kbd>Esc</kbd> fecha galeria ou reseta transformações</li>
+          <li><kbd>[</kbd> <kbd>]</kbd> modelo anterior / próximo no catálogo</li>
+          <li>Mouse: arrastar para orbitar</li>
+        </ul>
+      </details>
+    </aside>
+  </main>
+
+  <div id="seletorModelos" class="seletor-modelos" aria-expanded="false">
+    <button type="button" class="seletor-modelos__overlay" id="seletorModelosOverlay" tabindex="-1" aria-label="Fechar galeria"></button>
+    <div class="seletor-modelos__painel" role="dialog" aria-label="Galeria de modelos 3D">
+      <div class="seletor-modelos__conteudo" id="conteudoSeletorModelos">
+        <div class="seletor-modelos__scroll">
+          <div id="gradeModelosPorGrupo"></div>
+        </div>
+      </div>
+      <button type="button" class="seletor-modelos__alca" id="alcaSeletorModelos" aria-expanded="false" aria-controls="conteudoSeletorModelos">
+        <span class="seletor-modelos__alca-drag" aria-hidden="true"></span>
+        <span class="seletor-modelos__alca-texto">Galeria de modelos</span>
+        <span class="seletor-modelos__alca-badge" id="badgeContagemModelos">0</span>
+        <span class="seletor-modelos__alca-seta" id="alcaSetaModelos" aria-hidden="true">▲</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="js/math3d.js"></script>
+  <script src="js/mtlParser.js"></script>
+  <script src="js/objParser.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/exemplosCatalogo.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/**
+ * Catálogo de modelos .obj de exemplo, agrupados por pasta.
+ * Caminhos relativos à raiz do site (index.html).
+ * Para novos arquivos: inclua o caminho no grupo adequado.
+ */
+const CATALOGO_EXEMPLOS_OBJ = {
+  'Raiz (models/)': [
+    'models/cubo.obj',
+    'models/piramide.obj',
+    'models/prisma_hex.obj',
+    'models/tetraedro.obj',
+  ],
+  'Pasta online/': [
+    'models/online/cube with white spaces.obj',
+    'models/online/cube_rgb.obj',
+    'models/online/cube_with_edges.obj',
+    'models/online/cube_with_materials.obj',
+    'models/online/cube_with_materials_comments.obj',
+    'models/online/empty_meshes.obj',
+    'models/online/hundred_cubes.obj',
+    'models/online/icosahedron.obj',
+    'models/online/lines.obj',
+    'models/online/lines_colors.obj',
+    'models/online/lines_in_meshes.obj',
+    'models/online/lines_in_meshes_2.obj',
+    'models/online/lines_triangles_colors.obj',
+    'models/online/lines_with_vt.obj',
+    'models/online/rectangle_with_texture.obj',
+    'models/online/single_rectangle.obj',
+    'models/online/single_triangle.obj',
+    'models/online/single_triangle_in_mesh.obj',
+    'models/online/single_triangle_negative_indices.obj',
+    'models/online/single_triangle_with_comments.obj',
+    'models/online/single_triangle_with_material.obj',
+    'models/online/single_triangle_with_normals_and_uvs.obj',
+    'models/online/texture_parameters.obj',
+    'models/online/two_materials_same_texture.obj',
+    'models/online/two_meshes_same_vertices.obj',
+    'models/online/two_meshes_with_same_name.obj',
+    'models/online/two_triangles.obj',
+    'models/online/two_triangles_in_meshes.obj',
+    'models/online/two_triangles_with_material.obj',
+  ],
+};
