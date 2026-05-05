@@ -1,57 +1,74 @@
-# Visualizador interativo OBJ + MTL (WebGL)
+# Aula 08 — Visualizador 3D OBJ + MTL (WebGL)
 
-## Objetivo
+Projeto da disciplina de **Computação Gráfica**: aplicativo web que interpreta **Wavefront OBJ** e **MTL** manualmente (sem Three.js nem loaders prontos), renderiza com **WebGL 1**, aplica **iluminação difusa**, **projeção perspectiva ou ortográfica** e **transformações 3D** via matrizes $4 \times 4$.
 
-Projeto acadêmico de **Computação Gráfica**: visualizar modelos **Wavefront OBJ** com materiais **MTL** (`Kd`), aplicar **iluminação difusa simples**, **projeção perspectiva ou isométrica (ortográfica)** e **transformações 3D** com matrizes 4×4, com código legível em **HTML/CSS/JavaScript** puro (sem Three.js nem carregadores prontos).
+Referência pedagógica: **Shreiner et al., *OpenGL Programming Guide*, 7ª edição, Cap. 2, p. 115** (pipeline, modelos e interação com a cena).
 
-Este trabalho está alinhado ao conteúdo de introdução a modelagem e visualização em 3D, em especial ao capítulo que descreve pipelines de vértices, modelos e interação com cena, conforme **Shreiner et al., *OpenGL Programming Guide*, 7ª edição, Cap. 2, p. 115** (referência da disciplina).
+---
+
+## Interface (layout atual)
+
+- **Cabeçalho:** título, botões **Importar OBJ** / **Importar MTL** (atalhos para os mesmos campos da barra lateral), navegação **Anterior** / **Próximo** no catálogo e indicador **posição / total**.
+- **Área principal:** canvas 3D em moldura; foco visual da tela.
+- **Barra lateral:** upload OBJ/MTL, abertura da **galeria**, estatísticas ($V$, $E$, $F$, Euler), atalhos de teclado.
+- **Galeria (rodapé):** painel que **expande para cima**; grade de cartões com ícone de malha; agrupamento por pasta (`models/` e `models/online/`). Lista definida em `js/exemplosCatalogo.js`.
+
+Tema visual: layout claro, tipografia **Inter**, acento azul discreto.
+
+---
 
 ## Como executar
 
-1. **Recomendado:** subir um servidor HTTP simples na pasta do projeto (alguns navegadores bloqueiam `fetch` em `file://`).
-
-   Com Python 3:
+1. **Recomendado:** servidor HTTP local (o `fetch` dos exemplos e do `objetos.mtl` costuma falhar em `file://`).
 
    ```bash
    cd "Aula 08"
    python -m http.server 8080
    ```
 
-   Abra no navegador: `http://localhost:8080/`
+   Abra: `http://localhost:8080/`
 
-2. **Alternativa:** abrir `index.html` diretamente. Se o modelo ou o MTL não aparecerem, use o servidor acima.
+2. **Alternativa:** abrir `index.html` direto no navegador. Use **Importar OBJ/MTL** manualmente se a carga automática não rodar.
 
-## Como carregar modelos
+**Requisitos:** navegador com **WebGL**; malhas muito grandes podem precisar da extensão `OES_element_index_uint` (índices 32 bits).
 
-- Use **Carregar modelo (.obj)** para escolher um arquivo OBJ.
-- Use **Carregar materiais (.mtl)** para escolher um MTL (por exemplo `models/objetos.mtl`). Ao recarregar o MTL, o último OBJ carregado é **remontado** com as novas cores.
-- O projeto inicia, quando servido por HTTP, carregando `models/objetos.mtl` e `models/cubo.obj`.
+---
 
-Na pasta `models/` há quatro exemplos prontos:
+## Carregar modelos
 
-| Arquivo          | Observação                                       |
-|------------------|--------------------------------------------------|
-| `cubo.obj`       | Normais + vários `usemtl`                        |
-| `piramide.obj`   | Misto de triângulos/quad + índices negativos     |
-| `tetraedro.obj`  | Sem `vn` (normais por face via produto vetorial) |
-| `prisma_hex.obj` | Polígonos com mais de 4 vértices (leque)         |
+| Forma | Descrição |
+|--------|-----------|
+| **Importar OBJ / MTL** (topo ou lateral) | Escolhe arquivos locais. Recarregar o MTL **remonta** o último OBJ com as novas cores. |
+| **Galeria** | Clique no cartão; tenta carregar `.mtl` com o mesmo prefixo do `.obj`. |
+| **Anterior / Próximo** | Percorre a lista ordenada do catálogo (com *wrap-around*). |
+| **Inicialização** | Com HTTP, carrega `models/objetos.mtl` e `models/cubo.obj`. |
+
+Modelos de exemplo:
+
+- **Raiz `models/`:** `cubo.obj`, `piramide.obj`, `tetraedro.obj`, `prisma_hex.obj`, `objetos.mtl`
+- **`models/online/`:** conjunto adicional de OBJ de teste (incluídos no catálogo em `exemplosCatalogo.js`)
+
+---
 
 ## Controles
 
 | Entrada | Ação |
 |---------|------|
-| **W** | Modo malha (wireframe) |
-| **S** | Modo sólido |
-| **P** | Alterna perspectiva e isométrica (ortográfica) |
-| **R** depois **X** / **Y** / **Z** | Eixo ativo para rotação |
-| **←** **→** | Rotaciona no eixo escolhido *ou* move em X (no modo translação) |
-| **↑** **↓** | Move em Y no modo translação |
-| **T** | Modo translação no plano da tela (eixos X/Y do objeto) |
-| **+** / **-** | Aumenta / diminui escala uniforme |
-| **Esc** | Reseta transformações (escala, rotações, translação, orbita do mouse) |
-| **Mouse** (arrastar) | Orbita simples (bônus) |
+| **W** | Malha (wireframe) |
+| **S** | Sólido |
+| **P** | Perspectiva ↔ ortográfica (“isométrica” didática) |
+| **R** depois **X** / **Y** / **Z** | Eixo de rotação |
+| **←** **→** | Rotação (modo padrão) ou translação em X (**T**) |
+| **↑** **↓** | Translação em Y (com **T**) |
+| **T** | Modo translação |
+| **+** **−** | Escala uniforme |
+| **[** **]** | Modelo anterior / próximo no catálogo |
+| **Esc** | Fecha a galeria, se aberta; senão **reseta** transformações |
+| **Mouse** (arrastar) | Órbita simples |
 
-## Estrutura de pastas
+---
+
+## Estrutura do projeto
 
 ```
 Aula 08/
@@ -59,47 +76,40 @@ Aula 08/
   style.css
   README.md
   js/
-    main.js        — interface, teclado, mouse, laço
-    math3d.js      — matrizes 4×4, vetores, proj e look-at
-    mtlParser.js   — `newmtl`, `Kd`
-    objParser.js   — `v`, `vn`, `vt`, `f`, `mtllib`, `usemtl`, leque
-    renderer.js    — WebGL, shaders, sólido / wireframe
+    main.js              — UI, teclado, mouse, câmera, galeria, navegação catálogo
+    math3d.js            — matrizes 4×4, vetores, perspectiva, ortográfica, look-at
+    mtlParser.js         — newmtl, Kd
+    objParser.js         — v, vn, vt, f, mtllib, usemtl, leque, Euler
+    renderer.js          — WebGL, shaders, sólido / wireframe
+    exemplosCatalogo.js  — caminhos dos OBJ da galeria (por grupo)
   models/
     objetos.mtl
-    cubo.obj
-    piramide.obj
-    tetraedro.obj
-    prisma_hex.obj
+    cubo.obj, piramide.obj, tetraedro.obj, prisma_hex.obj
+    online/              — OBJ (e alguns MTL) extras no catálogo
+  latex/
+    relatorio.tex        — relatório técnico LaTeX (Overleaf / pdfLaTeX)
 ```
 
-## Suporte a OBJ / MTL (implementação própria)
+---
 
-**OBJ**
+## Suporte OBJ / MTL (implementação própria)
 
-- `v`, `vn`, `vt`
-- faces `f v`, `f v//vn`, `f v/vt/vn`
-- índices negativos
-- comentários `#`, grupos `g` / `o` ignorados sem erro
-- `mtllib` e `usemtl` para escolher material por face
+**OBJ:** `v`, `vn`, `vt`; faces `f v`, `f v//vn`, `f v/vt/vn`; índices negativos; `#`; `g`/`o` ignorados sem quebrar; `mtllib`, `usemtl`.
 
-**MTL**
+**MTL:** `newmtl`, `Kd r g b` (cor difusa no shader).
 
-- `newmtl nome`
-- `Kd r g b` (cor difusa aplicada na iluminação por face no fragment shader)
+**Geometria:** triangulação em **leque** para polígonos com 4+ vértices; centralização pelo centroide; normalização de escala; normal de face `(v₁ − v₀) × (v₂ − v₀)` quando faltar `vn`.
 
-**Geometria**
+**Renderização:** luz direcional + ambiente; **culling** simplificado pela componente $z$ da normal no espaço da vista (fragment shader); matriz normal $3 \times 3$ consistente com o modelo-vista; wireframe por arestas únicas.
 
-- polígonos com 4+ vértices: triangulação em **leque**
-- centroide → centralizar na origem → escalar para caber na view
-- se faltar normal: **n = (v₁ − v₀) × (v₂ − v₀)**
+---
 
-**Renderização**
+## Relatório técnico (LaTeX)
 
-- sólido com luz direcional fixa e `Kd`
-- wireframe por índices de arestas
-- **culling** de faces traseiras no fragment shader usando **n.z** no espaço da vista
-- matriz normal inversa-transposta (submatriz 3×3) para normais
+Em **`latex/relatorio.tex`** há um artigo em português descrevendo arquitetura, parsers, pipeline e limitações — pronto para **Overleaf** (pdfLaTeX). Ajuste `\author{...}` com nome e dados da turma, se necessário.
+
+---
 
 ## Observação
 
-Nomes de funções e variáveis estão em **português** quando faz sentido pedagógico; comentários focam nos passos da pipeline e nos requisitos da atividade.
+Nomes de funções e variáveis aparecem em **português** onde ajuda a leitura didática; a lógica de renderização e de carga permanece explícita, sem camadas desnecessárias.
