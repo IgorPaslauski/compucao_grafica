@@ -5,12 +5,7 @@
 
 /** Cria matriz identidade 4x4 (array 16 elementos, coluna a coluna). */
 function matrizIdentidade() {
-  return new Float32Array([
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1,
-  ]);
+  return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 
 /** Multiplica A * B (ambas 4x4 col-major). */
@@ -46,34 +41,19 @@ function matrizEscalaUniforme(s) {
 function matrizRotacaoEixoX(rad) {
   const c = Math.cos(rad);
   const s = Math.sin(rad);
-  return new Float32Array([
-    1, 0, 0, 0,
-    0, c, s, 0,
-    0, -s, c, 0,
-    0, 0, 0, 1,
-  ]);
+  return new Float32Array([1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]);
 }
 
 function matrizRotacaoEixoY(rad) {
   const c = Math.cos(rad);
   const s = Math.sin(rad);
-  return new Float32Array([
-    c, 0, -s, 0,
-    0, 1, 0, 0,
-    s, 0, c, 0,
-    0, 0, 0, 1,
-  ]);
+  return new Float32Array([c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]);
 }
 
 function matrizRotacaoEixoZ(rad) {
   const c = Math.cos(rad);
   const s = Math.sin(rad);
-  return new Float32Array([
-    c, s, 0, 0,
-    -s, c, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1,
-  ]);
+  return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 
 /**
@@ -82,17 +62,29 @@ function matrizRotacaoEixoZ(rad) {
  */
 function submatriz3x3De4x4(m) {
   return new Float32Array([
-    m[0], m[1], m[2],
-    m[4], m[5], m[6],
-    m[8], m[9], m[10],
+    m[0],
+    m[1],
+    m[2],
+    m[4],
+    m[5],
+    m[6],
+    m[8],
+    m[9],
+    m[10],
   ]);
 }
 
 /** Inversa 3x3 (para transformar normais quando só há rotação+escala uniforme). */
 function inverterMatriz3x3(m) {
-  const a = m[0], b = m[1], c = m[2];
-  const d = m[3], e = m[4], f = m[5];
-  const g = m[6], h = m[7], i = m[8];
+  const a = m[0],
+    b = m[1],
+    c = m[2];
+  const d = m[3],
+    e = m[4],
+    f = m[5];
+  const g = m[6],
+    h = m[7],
+    i = m[8];
   const A = e * i - f * h;
   const B = -(d * i - f * g);
   const C = d * h - e * g;
@@ -106,18 +98,30 @@ function inverterMatriz3x3(m) {
   if (Math.abs(det) < 1e-12) return null;
   det = 1 / det;
   return new Float32Array([
-    A * det, D * det, G * det,
-    B * det, E * det, H * det,
-    C * det, F * det, I * det,
+    A * det,
+    D * det,
+    G * det,
+    B * det,
+    E * det,
+    H * det,
+    C * det,
+    F * det,
+    I * det,
   ]);
 }
 
 /** Transposta 3x3 (col-major in/out). */
 function transporMatriz3x3(m) {
   return new Float32Array([
-    m[0], m[3], m[6],
-    m[1], m[4], m[7],
-    m[2], m[5], m[8],
+    m[0],
+    m[3],
+    m[6],
+    m[1],
+    m[4],
+    m[7],
+    m[2],
+    m[5],
+    m[8],
   ]);
 }
 
@@ -172,10 +176,22 @@ function matrizPerspectiva(fovyRad, aspecto, perto, longe) {
   const f = 1 / Math.tan(fovyRad / 2);
   const inv = 1 / (perto - longe);
   return new Float32Array([
-    f / aspecto, 0, 0, 0,
-    0, f, 0, 0,
-    0, 0, (longe + perto) * inv, -1,
-    0, 0, 2 * longe * perto * inv, 0,
+    f / aspecto,
+    0,
+    0,
+    0,
+    0,
+    f,
+    0,
+    0,
+    0,
+    0,
+    (longe + perto) * inv,
+    -1,
+    0,
+    0,
+    2 * longe * perto * inv,
+    0,
   ]);
 }
 
@@ -185,9 +201,18 @@ function matrizOrtografica(esquerda, direita, baixo, cima, perto, longe) {
   const tb = cima - baixo;
   const fn = longe - perto;
   return new Float32Array([
-    2 / rl, 0, 0, 0,
-    0, 2 / tb, 0, 0,
-    0, 0, -2 / fn, 0,
+    2 / rl,
+    0,
+    0,
+    0,
+    0,
+    2 / tb,
+    0,
+    0,
+    0,
+    0,
+    -2 / fn,
+    0,
     -(direita + esquerda) / rl,
     -(cima + baixo) / tb,
     -(longe + perto) / fn,
@@ -201,7 +226,9 @@ function matrizLookAt(olho, alvo, cima) {
   const zy = olho[1] - alvo[1];
   const zz = olho[2] - alvo[2];
   let len = Math.hypot(zx, zy, zz);
-  const z0 = zx / len, z1 = zy / len, z2 = zz / len;
+  const z0 = zx / len,
+    z1 = zy / len,
+    z2 = zz / len;
 
   let x0 = cima[1] * z2 - cima[2] * z1;
   let x1 = cima[2] * z0 - cima[0] * z2;
@@ -216,9 +243,18 @@ function matrizLookAt(olho, alvo, cima) {
   const y2 = z0 * x1 - z1 * x0;
 
   return new Float32Array([
-    x0, y0, z0, 0,
-    x1, y1, z1, 0,
-    x2, y2, z2, 0,
+    x0,
+    y0,
+    z0,
+    0,
+    x1,
+    y1,
+    z1,
+    0,
+    x2,
+    y2,
+    z2,
+    0,
     -produtoEscalar3([x0, x1, x2], olho),
     -produtoEscalar3([y0, y1, y2], olho),
     -produtoEscalar3([z0, z1, z2], olho),
@@ -228,9 +264,10 @@ function matrizLookAt(olho, alvo, cima) {
 
 /** Multiplica matriz 4x4 por ponto homogêneo (x,y,z,1). Saída (x,y,z). */
 function transformarPonto(matriz, p) {
-  const x = p[0], y = p[1], z = p[2];
-  const w =
-    matriz[3] * x + matriz[7] * y + matriz[11] * z + matriz[15];
+  const x = p[0],
+    y = p[1],
+    z = p[2];
+  const w = matriz[3] * x + matriz[7] * y + matriz[11] * z + matriz[15];
   const owx = (matriz[0] * x + matriz[4] * y + matriz[8] * z + matriz[12]) / w;
   const owy = (matriz[1] * x + matriz[5] * y + matriz[9] * z + matriz[13]) / w;
   const owz = (matriz[2] * x + matriz[6] * y + matriz[10] * z + matriz[14]) / w;
