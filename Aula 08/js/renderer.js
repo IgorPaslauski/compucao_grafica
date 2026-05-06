@@ -1,7 +1,3 @@
-/**
- * Camada de renderização WebGL — triângulos, linhas, iluminação simples.
- */
-
 const VERT_SHADER = `
 attribute vec3 aPosicao;
 attribute vec3 aNormal;
@@ -78,9 +74,6 @@ function criarPrograma(gl, vsSrc, fsSrc) {
   return prog;
 }
 
-/**
- * @param {HTMLCanvasElement} canvas
- */
 function criarRenderizador(canvas) {
   const gl = canvas.getContext('webgl', { alpha: true, antialias: true });
   if (!gl) return { ok: false, erro: 'WebGL não disponível neste navegador.' };
@@ -164,13 +157,6 @@ function criarRenderizador(canvas) {
     gl.vertexAttribPointer(loc.aCor, 3, gl.FLOAT, false, stride, offset);
   }
 
-  /**
-   * @param {Float32Array} mvp
-   * @param {Float32Array} modelView
-   * @param {Float32Array} matNormal3 — 3x3 col-major para normais
-   * @param {Float32Array} luzDirVista — vetor 3 normalizado no espaço da vista
-   * @param {'solido'|'malha'} modoDesenho
-   */
   function desenharCena(mvp, matNormal3, luzDirVista, modoDesenho) {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -216,7 +202,6 @@ function criarRenderizador(canvas) {
   };
 }
 
-/** Luz direcional no mundo; retorna direção em espaço da vista (3 floats). */
 function direcaoLuzNoEspacoDaVista(matrizVista) {
   const luzMundo = normalizarVetor3(vetor3(0.35, 0.85, 0.42));
   const r3 = submatriz3x3De4x4(matrizVista);

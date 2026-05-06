@@ -1,27 +1,3 @@
-/**
- * Parser OBJ manual + montagem de triângulos, materiais e estatísticas.
- */
-
-/**
- * @typedef {Object} MalhaRenderizavel
- * @property {Float32Array} posicoes — intercalado xyz por vértice de desenho
- * @property {Float32Array} normais
- * @property {Float32Array} cores — rgb
- * @property {Uint16Array|Uint32Array} indicesTriangulos
- * @property {Uint16Array|Uint32Array} indicesLinhas — para wireframe
- * @property {boolean} usouIndices32bits
- * @property {number} numVerticesArquivo — linhas `v`
- * @property {number} numArestasUnicas
- * @property {number} numFacesTriangulos
- * @property {number} euler
- * @property {string} nomeMtllib
- */
-
-/**
- * Resolve índice OBJ (1-based ou negativo) para 0-based.
- * @param {string} token
- * @param {number} contagem
- */
 function resolverIndiceObj(token, contagem) {
   if (!token || token === '') return null;
   const i = parseInt(token, 10);
@@ -30,10 +6,6 @@ function resolverIndiceObj(token, contagem) {
   return i - 1;
 }
 
-/**
- * Interpreta uma referência de vértice "v/vt/vn".
- * @returns {{ vi: number|null, vti: number|null, vni: number|null }}
- */
 function interpretarRefVertice(parte, nv, nvt, nvn) {
   const bits = parte.split('/');
   const vi = resolverIndiceObj(bits[0], nv);
@@ -61,22 +33,14 @@ function triangularLeque(indicesVertices) {
   return tris;
 }
 
-/**
- * Monta malha a partir do texto OBJ e mapa de materiais (MTL).
- * @param {string} textoObj
- * @param {Map<string, { kd: number[] }>} materiais
- * @returns {MalhaRenderizavel}
- */
 function montarMalhaDeObj(textoObj, materiais) {
-  const vertices = []; // cada [x,y,z]
-  const normais = []; // cada [nx,ny,nz]
-  const uvs = []; // cada [u,v]
+  const vertices = [];
+  const normais = [];
+  const uvs = [];
 
   let nomeMtllib = '';
-  /** @type {string} */
   let materialAtual = '';
 
-  /** @type {{ verts: any[], material: string }[]} */
   const facesBrutas = [];
 
   const linhas = textoObj.split(/\r?\n/);
@@ -130,7 +94,6 @@ function montarMalhaDeObj(textoObj, materiais) {
 
     if (cmd === 'f') {
       const refs = partes.slice(1);
-      /** @type {any[]} */
       const cantos = [];
       for (const ref of refs) {
         const { vi, vti, vni } = interpretarRefVertice(
@@ -156,8 +119,9 @@ function montarMalhaDeObj(textoObj, materiais) {
 
   const numVerticesArquivo = vertices.length;
 
-  // Centroide e normalização (nos vértices originais)
-  let cx = 0, cy = 0, cz = 0;
+  let cx = 0,
+    cy = 0,
+    cz = 0;
   if (numVerticesArquivo > 0) {
     for (const v of vertices) {
       cx += v[0];
@@ -169,7 +133,6 @@ function montarMalhaDeObj(textoObj, materiais) {
     cz /= numVerticesArquivo;
   }
 
-  /** @type {[number,number,number][]} */
   const vertsCentralizados = vertices.map((v) => [
     v[0] - cx,
     v[1] - cy,
@@ -199,7 +162,6 @@ function montarMalhaDeObj(textoObj, materiais) {
     return normalizarVetor3(new Float32Array([n[0], n[1], n[2]]));
   }
 
-  /** Lista de triângulos: { p0,p1,p2,n0,n1,n2,c0,c1,c2, material } */
   const triangulos = [];
 
   for (const face of facesBrutas) {
@@ -231,7 +193,15 @@ function montarMalhaDeObj(textoObj, materiais) {
       const c2 = new Float32Array(kd);
 
       triangulos.push({
-        pa, pb, pc, na, nb, nc, c0, c1, c2,
+        pa,
+        pb,
+        pc,
+        na,
+        nb,
+        nc,
+        c0,
+        c1,
+        c2,
       });
     }
   }
@@ -268,7 +238,6 @@ function montarMalhaDeObj(textoObj, materiais) {
   const indicesTriangulos = new CtorIdx(numVerticesDesenho);
   for (let i = 0; i < numVerticesDesenho; i++) indicesTriangulos[i] = i;
 
-  // Arestas únicas para E e Euler
   const arestaSet = new Set();
   function chaveAresta(i, j) {
     return i < j ? `${i},${j}` : `${j},${i}`;
@@ -285,7 +254,6 @@ function montarMalhaDeObj(textoObj, materiais) {
 
   const euler = numVerticesArquivo - numArestasUnicas + numFacesTriangulos;
 
-  // Wireframe: cada aresta única -> dois índices
   const indicesLinhas = new CtorIdx(numArestasUnicas * 2);
   let li = 0;
   for (const key of arestaSet) {

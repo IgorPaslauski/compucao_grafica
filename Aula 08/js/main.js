@@ -1,34 +1,24 @@
-/**
- * Entrada principal: interface, teclado, mouse e laço de renderização.
- */
-
 const PASSO_ROTACAO = 0.045;
 const PASSO_TRANSLACAO = 0.04;
 const FATOR_ESCALA = 1.08;
 
 const estado = {
-  /** @type {Map<string, { kd: number[] }>} */
   materiais: new Map(),
   malha: null,
   nomeObj: '—',
   textoObjGuardado: '',
-  /** 'solido' | 'malha' */
   modoVisual: 'solido',
-  /** 'perspectiva' | 'isometrica' */
   projecao: 'perspectiva',
   translacao: { x: 0, y: 0 },
   escala: 1,
   anguloX: 0,
   anguloY: 0,
   anguloZ: 0,
-  /** 'X' | 'Y' | 'Z' */
   eixoRotacao: 'Y',
-  /** 'rotacao' | 'translacao' */
   modoInteracao: 'rotacao',
   aguardandoEixoPosR: false,
   orbitaMouseX: 0,
   orbitaMouseY: 0,
-  /** Caminho no catálogo (ex.: models/cubo.obj) ou null se veio de arquivo local */
   caminhoCatalogoAtual: null,
 };
 
@@ -52,7 +42,6 @@ function matrizModeloDoUsuario() {
   const mRz = matrizRotacaoEixoZ(anguloZ);
   const mT = matrizTranslacao(translacao.x, translacao.y, 0);
 
-  // Ordem no vértice: translada( Rk * Rm * S * v )
   let M = mS;
   M = multiplicarMatrizes4(mRyM, M);
   M = multiplicarMatrizes4(mRxM, M);
@@ -144,13 +133,11 @@ function carregarMtlDoTexto(texto) {
   atualizarPainel();
 }
 
-/** Nome do arquivo a partir do caminho (sem pastas). */
 function nomeArquivoDeCaminho(caminho) {
   const partes = caminho.replace(/\\/g, '/').split('/');
   return partes[partes.length - 1] || caminho;
 }
 
-/** Mesma ordem da galeria: grupos do catálogo, arquivos ordenados alfabeticamente. */
 function listaCaminhosCatalogoOrdenada() {
   if (typeof CATALOGO_EXEMPLOS_OBJ === 'undefined') return [];
   const out = [];
@@ -216,7 +203,6 @@ function configurarBotoesNavegacaoTopo() {
   atualizarBarraNavegacaoModelos();
 }
 
-/** Destaca o cartão do modelo ativo; null ao carregar arquivo local. */
 function marcarExemploAtivo(caminho) {
   document.querySelectorAll('.cartao-modelo').forEach((el) => {
     const ativo = caminho != null && el.dataset.caminho === caminho;
@@ -224,7 +210,6 @@ function marcarExemploAtivo(caminho) {
   });
 }
 
-/** Fundo sólido escuro para área do ícone (contraste com linhas claras). */
 function corFundoMiniaturaCartao(caminho) {
   let h = 5381;
   for (let i = 0; i < caminho.length; i++) {
@@ -282,9 +267,6 @@ function configurarSeletorModelosUi() {
 
 const SVG_MALHA_CARTAO = `<svg class="cartao-modelo__svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" d="M32 8 L52 22 L52 42 L32 56 L12 42 L12 22 Z M32 8 L32 28 M12 22 L32 28 L52 22 M12 42 L32 28 L52 42"/><circle cx="32" cy="28" r="2.5" fill="currentColor"/></svg>`;
 
-/**
- * Grade visual de cartões (display:grid) a partir do catálogo.
- */
 function montarGaleriaModelos() {
   const host = document.getElementById('gradeModelosPorGrupo');
   const badge = document.getElementById('badgeContagemModelos');
@@ -355,8 +337,6 @@ function montarGaleriaModelos() {
   if (badge) badge.textContent = String(total);
 }
 
-/** Busca .mtl com o mesmo prefixo do .obj (quando existir) e aplica o OBJ. */
-/** @returns {Promise<boolean>} */
 async function carregarExemploRemoto(caminho) {
   const msg = document.getElementById('msgWebgl');
   if (msg) msg.textContent = 'Carregando…';
@@ -370,9 +350,7 @@ async function carregarExemploRemoto(caminho) {
     if (respMtl.ok) {
       carregarMtlDoTexto(await respMtl.text());
     }
-  } catch (_) {
-    /* sem MTL par */
-  }
+  } catch (_) {}
 
   try {
     const respObj = await fetch(encodeURI(caminho));

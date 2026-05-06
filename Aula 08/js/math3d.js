@@ -1,14 +1,7 @@
-/**
- * Utilitários de álgebra linear 3D — matrizes 4x4 (coluna-major para WebGL).
- * Nomes em português para apresentação acadêmica.
- */
-
-/** Cria matriz identidade 4x4 (array 16 elementos, coluna a coluna). */
 function matrizIdentidade() {
   return new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 
-/** Multiplica A * B (ambas 4x4 col-major). */
 function multiplicarMatrizes4(a, b) {
   const out = new Float32Array(16);
   for (let c = 0; c < 4; c++) {
@@ -31,7 +24,6 @@ function matrizTranslacao(tx, ty, tz) {
   return m;
 }
 
-/** Escala uniforme em torno da origem. */
 function matrizEscalaUniforme(s) {
   const m = matrizIdentidade();
   m[0] = m[5] = m[10] = s;
@@ -56,10 +48,6 @@ function matrizRotacaoEixoZ(rad) {
   return new Float32Array([c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 }
 
-/**
- * Extrai submatriz 3x3 superior-esquerda de uma 4x4 (para normais).
- * Saída em coluna-major 9 elementos.
- */
 function submatriz3x3De4x4(m) {
   return new Float32Array([
     m[0],
@@ -74,7 +62,6 @@ function submatriz3x3De4x4(m) {
   ]);
 }
 
-/** Inversa 3x3 (para transformar normais quando só há rotação+escala uniforme). */
 function inverterMatriz3x3(m) {
   const a = m[0],
     b = m[1],
@@ -110,7 +97,6 @@ function inverterMatriz3x3(m) {
   ]);
 }
 
-/** Transposta 3x3 (col-major in/out). */
 function transporMatriz3x3(m) {
   return new Float32Array([
     m[0],
@@ -125,10 +111,6 @@ function transporMatriz3x3(m) {
   ]);
 }
 
-/**
- * Normal = (R^-1)^T para normais com matriz de modelo não ortogonal.
- * Com rotação + escala uniforme, inversa transposta = R * (1/s).
- */
 function matrizNormal3x3(matrizModelo) {
   const r3 = submatriz3x3De4x4(matrizModelo);
   const inv = inverterMatriz3x3(r3);
@@ -154,7 +136,6 @@ function produtoEscalar3(a, b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-/** a x b */
 function produtoVetorial3(a, b) {
   return vetor3(
     a[1] * b[2] - a[2] * b[1],
@@ -171,7 +152,6 @@ function escalarVetor3(k, v) {
   return vetor3(k * v[0], k * v[1], k * v[2]);
 }
 
-/** Perspectiva simples (campo em radianos, aspecto w/h, near, far), coluna-major WebGL. */
 function matrizPerspectiva(fovyRad, aspecto, perto, longe) {
   const f = 1 / Math.tan(fovyRad / 2);
   const inv = 1 / (perto - longe);
@@ -195,7 +175,6 @@ function matrizPerspectiva(fovyRad, aspecto, perto, longe) {
   ]);
 }
 
-/** Ortográfica simétrica (útil para vista isométrica sem distorção). */
 function matrizOrtografica(esquerda, direita, baixo, cima, perto, longe) {
   const rl = direita - esquerda;
   const tb = cima - baixo;
@@ -220,7 +199,6 @@ function matrizOrtografica(esquerda, direita, baixo, cima, perto, longe) {
   ]);
 }
 
-/** Olhar de câmera: eye, alvo, up — gera view matrix 4x4. */
 function matrizLookAt(olho, alvo, cima) {
   const zx = olho[0] - alvo[0];
   const zy = olho[1] - alvo[1];
@@ -262,7 +240,6 @@ function matrizLookAt(olho, alvo, cima) {
   ]);
 }
 
-/** Multiplica matriz 4x4 por ponto homogêneo (x,y,z,1). Saída (x,y,z). */
 function transformarPonto(matriz, p) {
   const x = p[0],
     y = p[1],
@@ -274,7 +251,6 @@ function transformarPonto(matriz, p) {
   return vetor3(owx, owy, owz);
 }
 
-/** Multiplica matriz 3x3 (col-major 9) por vetor 3. */
 function transformarDirecao(mat3, v) {
   return vetor3(
     mat3[0] * v[0] + mat3[3] * v[1] + mat3[6] * v[2],

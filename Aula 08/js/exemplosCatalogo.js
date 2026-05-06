@@ -1,8 +1,3 @@
-/**
- * Catálogo de modelos .obj de exemplo, agrupados por pasta.
- * Caminhos relativos à raiz do site (index.html).
- * Para novos arquivos: inclua o caminho no grupo adequado.
- */
 const CATALOGO_EXEMPLOS_OBJ = {
   'Raiz (models/)': [
     'models/cubo.obj',
